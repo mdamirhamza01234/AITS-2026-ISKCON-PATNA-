@@ -52,6 +52,11 @@
     };
     var list = [];
     try { list = JSON.parse(localStorage.getItem(KEY) || '[]'); if (!Array.isArray(list)) list = []; } catch (e) { list = []; }
+    // a finished test is shown again when it is reopened: do not store the same result twice
+    var sig = JSON.stringify(rec.qs);
+    for (var k = 0; k < list.length; k++) {
+      if (list[k].set === rec.set && JSON.stringify(list[k].qs) === sig) return;
+    }
     list.push(rec);
     localStorage.setItem(KEY, JSON.stringify(list));
   }

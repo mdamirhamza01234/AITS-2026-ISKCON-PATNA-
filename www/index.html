@@ -344,7 +344,7 @@ function fmtDate(ts){
 }
 function accuracy(r){ const a = r.correct + r.wrong; return a ? Math.round(r.correct / a * 100) : 0; }
 function tone(r){ const p = r.score / r.max; return p >= 0.6 ? 'good' : p >= 0.3 ? 'mid' : 'low'; }
-function recTitle(r){ return r.title || ('AITS Test ' + (r.set || '')); }
+function recTitle(r){ return r.set ? ('AITS Test ' + r.set) : (r.title || 'AITS Test'); }
 
 /* ---------- home ---------- */
 function openHref(path, title){

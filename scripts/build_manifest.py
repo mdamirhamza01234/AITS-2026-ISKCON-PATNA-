@@ -40,7 +40,7 @@ def classify(name):
     else:
         return None
     # prefer a number written right after test/part/set/air (e.g. test01, Part Test-04, AIR 4)
-    m = re.search(r"(?:test|part|set|air)[\s_\-]*0*(\d{1,2})(?!\d)", low)
+    m = re.search(r"(?:aits|test|part|set|air)[\s_\-]*0*(\d{1,2})(?!\d)", low)
     if m:
         n = int(m.group(1))
     else:
@@ -56,58 +56,10 @@ def classify(name):
 # answers and the time left to window.__vpCapture (see record_hook.js).
 TEMPLATES = [
     {
-        "name": "Test 01/02 style (QUESTIONS + responses)",
-        "must": [r"const QUESTIONS = window\.__QDATA__", r"const responses = \{\}"],
-        "anchor": r"function submitTest\s*\(\s*\)\s*\{",
-        "js": "__vpCapture(QUESTIONS, function(i){return responses[QUESTIONS[i].id];}, timeLeft, TOTAL_TIME_SECONDS);",
-    },
-    {
-        "name": "Test 03 style (DATA + answers[])",
-        "must": [r"const DATA = JSON\.parse\(document\.getElementById\('dataScript'\)"],
-        "anchor": r"function submitTest\s*\(\s*\)\s*\{",
-        "js": "__vpCapture(DATA.map(function(d){return {id:d.n,subject:d.subject,answer:d.correct};}), function(i){return answers[i+1];}, timeLeft, 180*60);",
-    },
-    {
-        "name": "Test 04 style (selected{})",
-        "must": [r"const selected = \{\};\s*// qid"],
-        "anchor": r"function submitTest\s*\(\s*\)\s*\{",
-        "js": "__vpCapture(QDATA, function(i){return selected[QDATA[i].id];}, timeLeft, TOTAL_SECONDS);",
-    },
-    {
-        "name": "Test 05 style (responses{} + doSubmit)",
-        "must": [r"let responses = \{\};\s*// qid", r"function doSubmit"],
-        "anchor": r"function doSubmit\s*\(\s*\)\s*\{",
-        "js": "__vpCapture(QDATA, function(i){return responses[QDATA[i].id];}, timeLeft, TOTAL_SECONDS);",
-    },
-    {
-        "name": "Test 06 style (state.answers)",
-        "must": [r"answers:\s*\{\},\s*// id", r"function submitTest\s*\(\s*auto\s*\)"],
-        "anchor": r"function submitTest\s*\(\s*auto\s*\)\s*\{",
-        "js": "__vpCapture(QDATA, function(i){return state.answers[QDATA[i].id];}, state.remaining, DURATION_SEC);",
-    },
-    {
-        "name": "Test 07 style (state[i].selected)",
-        "must": [r"const state = QDATA\.map\(\(\)=>\(\{status:'notvisited', selected:null\}\)\)"],
-        "anchor": r"function submitTest\s*\(\s*\)\s*\{",
-        "js": "__vpCapture(QDATA, function(i){return state[i].selected;}, timeLeft, TOTAL_TIME);",
-    },
-    {
-        "name": "Test 08 style (DATA.answers + userAns[])",
+        "name": "AITS mock style (DATA.answers + userAns[])",
         "must": [r"app-data-holder", r"function showResults"],
         "anchor": r"function showResults\s*\(\s*\)\s*\{",
         "js": "__vpCapture(DATA.answers.map(function(a,i){var r=subjectRanges.filter(function(x){return i>=x.start&&i<x.end;})[0];return {id:i+1,subject:r?r.name:'',answer:a};}), function(i){return userAns[i];}, timeLeft, 180*60);",
-    },
-    {
-        "name": "Test 09 style (state[i].answer)",
-        "must": [r"const state = QDATA\.map\(\(\)=>\(\{answer:null"],
-        "anchor": r"function doSubmit\s*\(\s*\)\s*\{",
-        "js": "__vpCapture(QDATA.map(function(q){return {id:q.id,subject:q.subject,answer:q.answer,alt:q.altAnswer};}), function(i){return state[i].answer;}, timeLeft, TOTAL_TIME);",
-    },
-    {
-        "name": "Test 10 style (state.selected{})",
-        "must": [r"selected:\s*\{\},\s*// qid -> option number"],
-        "anchor": r"function submitTest\s*\(\s*\)\s*\{",
-        "js": "__vpCapture(QDATA, function(i){return state.selected[QDATA[i].id];}, state.timeLeft, DURATION_SEC);",
     },
 ]
 
