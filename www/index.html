@@ -112,6 +112,9 @@
   .btn-mock{background:linear-gradient(135deg, var(--fuchsia), var(--fuchsia-b)); color:#fff; box-shadow:0 10px 22px -12px rgba(232,91,208,0.5);}
   .btn.off{opacity:.35; pointer-events:none;}
 
+  .sec-head{display:flex; align-items:center; gap:10px; margin:10px 2px 0; font-size:13px; font-weight:700; letter-spacing:.7px; text-transform:uppercase; color:var(--ink-soft);}
+  .sec-head::after{content:''; flex:1; height:1px; background:var(--card-line);}
+  .sec-head:first-child{margin-top:0;}
   .empty-state{display:none; text-align:center; color:var(--ink-faint); padding:40px 10px; font-size:14.5px;}
   .empty-state.show{display:block;}
   .author-line{text-align:center; color:var(--ink-faint); font-size:12.5px; padding:0 20px 8px;}
@@ -264,7 +267,7 @@
 
     <div class="search-shell">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input id="searchBox" type="text" placeholder="Search a set, e.g. 'AITS 4'">
+      <input id="searchBox" type="text" placeholder="Search a set, e.g. 'AITS 4' or 'PRE NEET'">
     </div>
   </header>
 
@@ -344,7 +347,10 @@ function fmtDate(ts){
 }
 function accuracy(r){ const a = r.correct + r.wrong; return a ? Math.round(r.correct / a * 100) : 0; }
 function tone(r){ const p = r.score / r.max; return p >= 0.6 ? 'good' : p >= 0.3 ? 'mid' : 'low'; }
-function recTitle(r){ return r.set ? ('AITS Test ' + r.set) : (r.title || 'AITS Test'); }
+const PRE = 16;   // set 16 is the separate PRE NEET 2026 section
+function setTitle(n){ return n === PRE ? 'PRE NEET 2026' : 'AITS Test ' + n; }
+function matches(s, q){ return setTitle(s.n).toLowerCase().includes(q) || ('aits ' + s.n).includes(q) || String(s.n) === q; }
+function recTitle(r){ return r.set ? setTitle(r.set) : (r.title || 'AITS Test'); }
 
 /* ---------- home ---------- */
 function openHref(path, title){
@@ -359,7 +365,7 @@ function btn(cls, icon, label, path, title){
 }
 function cardHTML(s, i){
   const m = manifest[String(s.n)] || {};
-  const t = 'AITS Test ' + s.n;
+  const t = setTitle(s.n);
   const mine = loadRecs().filter(r => r.set === s.n);
   let best = '';
   if(mine.length){
@@ -369,7 +375,7 @@ function cardHTML(s, i){
   return `
   <div class="card" style="animation-delay:${i * 0.04}s">
     <div class="card-head">
-      <div class="idx">${s.n}</div>
+      <div class="idx">${s.n === PRE ? 'P' : s.n}</div>
       <div>
         <h3>${t}</h3>
         <p>Question Paper &middot; Answer Key &middot; Mock Test</p>
@@ -384,13 +390,17 @@ function cardHTML(s, i){
   </div>`;
 }
 function renderCards(list){
-  $('cardArea').innerHTML = list.map(cardHTML).join('');
+  const a = list.filter(s => s.n !== PRE), p = list.filter(s => s.n === PRE);
+  let i = 0;
+  $('cardArea').innerHTML =
+    (a.length ? '<div class="sec-head">All India Test Series</div>' + a.map(s => cardHTML(s, i++)).join('') : '') +
+    (p.length ? '<div class="sec-head">PRE NEET 2026</div>' + p.map(s => cardHTML(s, i++)).join('') : '');
   $('emptyState').classList.toggle('show', list.length === 0);
 }
 $('searchBox').addEventListener('input', e => {
   const q = e.target.value.trim().toLowerCase();
   if(!q){ renderCards(sets); return; }
-  renderCards(sets.filter(s => ('aits ' + s.n).includes(q) || String(s.n) === q));
+  renderCards(sets.filter(s => matches(s, q)));
 });
 
 /* ---------- records list ---------- */
@@ -533,7 +543,7 @@ window.addEventListener('popstate', () => { closeDrawerVisual(); closeSheetVisua
 
 function renderAll(){
   renderRecords();
-  renderCards(sets.filter(s => !$('searchBox').value.trim() || ('aits ' + s.n).includes($('searchBox').value.trim().toLowerCase())));
+  renderCards(sets.filter(s => !$('searchBox').value.trim() || matches(s, $('searchBox').value.trim().toLowerCase())));
   if($('sheet').classList.contains('open')) renderDetail();
 }
 

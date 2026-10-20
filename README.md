@@ -5,7 +5,7 @@ bundle ho jati hain, isliye app mein internet ki zaroorat nahi padti.
 
 ## Steps
 
-1. Apni 45 files (15 paper, 15 solution, 15 mock) (papers, keys, mock tests) `files/` folder mein daalo. Naam ke rules `files/README.txt` mein hain.
+1. Apni 48 files (16 sets: 15 AITS + PRE NEET 2026, har set mein paper, solution, mock) (papers, keys, mock tests) `files/` folder mein daalo. Naam ke rules `files/README.txt` mein hain.
 2. Poora folder GitHub repo mein upload karo (`.github` folder bhi, usi mein build workflow hai).
 3. GitHub par **Actions** tab kholo, **Build APK** run hone do (kuch minute lagte hain).
 4. Run khatam hone par neeche **Artifacts** mein `AITS-app` download karo, usme `app-debug.apk` hai.
