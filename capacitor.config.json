@@ -1,0 +1,8 @@
+{
+  "appId": "com.aits.testseries",
+  "appName": "AITS",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}

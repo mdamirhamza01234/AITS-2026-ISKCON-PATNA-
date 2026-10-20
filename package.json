@@ -1,0 +1,14 @@
+{
+  "name": "aits-test-series",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AITS Test Series - offline Android app",
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/core": "^6.1.2",
+    "pdfjs-dist": "3.11.174"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.2"
+  }
+}
